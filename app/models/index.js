@@ -1,16 +1,14 @@
 var Sequelize = require('sequelize');
 var express = require('express');
 var app = express();
+var pg = require('pg');
+var config = require('../../config/db.js');
 // DB Setting
-var sequelize = new Sequelize('test', 'skatpgusskat', 'Aa1351915', {
-	host: 'localhost',
-	dialect: 'postgres',
 
-	pool: {
-		max: 5,
-		min: 0,
-		idle: 10000
-	},
+var sequelize = new Sequelize(config.database, config.username, config.password, {
+  host: config.host,
+  port: config.port,
+  dialect: config.dialect
 });
 sequelize.authenticate();
 
