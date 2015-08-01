@@ -5,7 +5,7 @@ var pg = require('pg');
 var config = require('../../config/db.js');
 // DB Setting
 
-var sequelize = new Sequelize(config.database, config.username, config.password, {
+var sequelize = new Sequelize(config.database, config.user, config.password, {
   host: config.host,
   port: config.port,
   dialect: config.dialect
