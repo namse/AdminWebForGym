@@ -20,7 +20,7 @@ var models = [
 'Admin'
 ];
 models.forEach(function(model) {
-	module.exports[model] = sequelize.import(__dirname + '/' + model);
+	module.exports[model] = sequelize.import(__dirname + '/' + model.toLowerCase());
 });
 
 module.exports.sequelize = sequelize;
