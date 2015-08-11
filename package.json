@@ -1,41 +1,42 @@
 {
-  "name": "node-js-getting-started",
-  "version": "0.1.4",
-  "description": "A sample Node.js app using Express 4",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "postinstall": "bower install"
-  },
-  "dependencies": {
-    "pg": "*",
-    "ejs": "^2.3.1",
-    "express": "~4.9.x",
-    "bower": "1.4.x",
-    "passport": ">= 0.0.0",
-    "passport-local": ">= 0.0.0",
-    "connect-flash" : "~0.1.1",     
-    "bcrypt-nodejs" : "latest",
-    "sequelize" : "3.5.1",
-    "pg-hstore" : "2.3.2",
+    "name": "node-js-getting-started",
+    "version": "0.1.4",
+    "description": "A sample Node.js app using Express 4",
+    "main": "index.js",
+    "scripts": {
+        "start": "node index.js",
+        "postinstall": "bower install"
+    },
+    "dependencies": {
+        "pg": "*",
+        "ejs": "^2.3.1",
+        "express": "~4.9.x",
+        "bower": "1.4.x",
+        "passport": ">= 0.0.0",
+        "passport-local": ">= 0.0.0",
+        "connect-flash": "~0.1.1",
+        "bcrypt-nodejs": "latest",
+        "sequelize": "3.5.1",
+        "pg-hstore": "2.3.2",
 
-    "morgan": "~1.0.0",
-    "body-parser": "~1.0.0",
-    "cookie-parser": "~1.0.0",
-    "method-override": "~1.0.0",
-    "express-session": "~1.0.0"  
-  },
-  "engines": {
-    "node": "0.12.2"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/heroku/node-js-getting-started"
-  },
-  "keywords": [
-    "node",
-    "heroku",
-    "express"
-  ],
-  "license": "MIT"
+        "morgan": "~1.0.0",
+        "body-parser": "~1.0.0",
+        "cookie-parser": "~1.0.0",
+        "method-override": "~1.0.0",
+        "express-session": "~1.0.0",
+        "serve-favicons": "latest"
+    },
+    "engines": {
+        "node": "0.12.2"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/heroku/node-js-getting-started"
+    },
+    "keywords": [
+        "node",
+        "heroku",
+        "express"
+    ],
+    "license": "MIT"
 }
