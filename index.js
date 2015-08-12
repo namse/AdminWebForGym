@@ -1,5 +1,4 @@
 "use strict";
-
 var express = require('express');
 var app = express();
 var pg = require('pg');
@@ -26,7 +25,7 @@ app.use(bodyParser()); // get information from html forms
 
 // required for passport
 app.use(session({
-    secret: 'ilovescotchscotchyscotchscotch',
+	secret: 'ilovescotchscotchyscotchscotch',
 })); // session secret
 app.use(passport.initialize());
 app.use(passport.session()); // persistent login sessions
@@ -42,7 +41,7 @@ app.set('view engine', 'ejs');
 
 
 
-
+console.log(Admin.permission);
 
 
 // routes ======================================================================
@@ -50,44 +49,7 @@ require('./app/routes.js')(app, passport); // load our routes and pass in our ap
 
 // launch ======================================================================
 models.sequelize.sync().then(function() {
-    Admin.findOrCreate({
-        where: {
-            email: "skatpgusskat@naver.com",
-        },
-        defaults: {
-            first_name: "dev",
-            last_name: "admin",
-            email: "skatpgusskat@naver.com",
-            password: Admin.generateHash("Aa1351915"),
-            permission: "SuperAdministrator"
-        }
-    }).spread(function(user, created) {
-        console.log(user.dataValues);
-        console.log('super admin created : ' + created);
-    }).error(function(err) {
-        console.log('Error occured' + err);
-    });
-
-    Admin.findOrCreate({
-        where: {
-            email: "test@test.com",
-        },
-        defaults: {
-            first_name: "test",
-            last_name: "admin",
-            email: "test@test.com",
-            password: Admin.generateHash("1234"),
-            permission: "dev"
-        }
-    }).spread(function(user, created) {
-        console.log(user.dataValues);
-        console.log('super admin created : ' + created);
-    }).error(function(err) {
-        console.log('Error occured' + err);
-    });
-
-
-    app.listen(app.get('port'), function() {
-        console.log('Node app is running on port', app.get('port'));
-    });
+	app.listen(app.get('port'), function() {
+		console.log('Node app is running on port', app.get('port'));
+	});
 });
