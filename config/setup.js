@@ -21,28 +21,48 @@ module.exports.setup = function(app) {
 				}
 			}).spread(function(user, created) {
 				console.log(user.dataValues);
-				console.log('super admin created : ' + created);
+				console.log('dev created : ' + created);
 			}).error(function(err) {
 				console.log('Error occured' + err);
 			});
 
 			Admin.findOrCreate({
 				where: {
-					email: "test@test.com",
+					email: "grand@master.com",
 				},
 				defaults: {
-					first_name: "test",
-					last_name: "admin",
-					email: "test@test.com",
+					first_name: "grand",
+					last_name: "master",
+					email: "grand@master.com",
 					password: Admin.generateHash("1234"),
-					permission: Admin.getPermissionName("dev")
+					permission: Admin.getPermissionName("grandMaster")
 				}
 			}).spread(function(user, created) {
 				console.log(user.dataValues);
-				console.log('super admin created : ' + created);
+				console.log('grand master created : ' + created);
 			}).error(function(err) {
 				console.log('Error occured' + err);
 			});
+
+			Admin.findOrCreate({
+				where: {
+					email: "manager@manager.com",
+				},
+				defaults: {
+					first_name: "manager",
+					last_name: "manager",
+					email: "manager@manager.com",
+					password: Admin.generateHash("1234"),
+					permission: Admin.getPermissionName("manager")
+				}
+			}).spread(function(user, created) {
+				console.log(user.dataValues);
+				console.log('manager created : ' + created);
+			}).error(function(err) {
+				console.log('Error occured' + err);
+			});
+
+
 		});
 	});
 };

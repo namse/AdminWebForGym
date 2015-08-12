@@ -37,7 +37,7 @@ module.exports = function(sequelize, DataTypes) {
 		},
 		classMethods: {
 			generateHash: function(password) {
-				return bcrypt.hashSync(password, bcrypt.genSaltSync(8), null);
+				return bcrypt.hashSync(password, bcrypt.genSaltSync(8));
 			},
 			getPermissionName: function(permission) {
 
