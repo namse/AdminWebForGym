@@ -12,8 +12,8 @@ var morgan = require('morgan');
 var favicon = require('serve-favicon');
 
 app.set('models', require('./app/models'));
-var models = app.get('models');
-var Admin = models.Admin;
+
+var setupConfig = require('./config/setup.js');
 // configuration ===============================================================
 app.use(favicon(__dirname + '/public/favicon.ico'));
 require('./config/passport')(app, passport); // pass passport for configuration
@@ -41,14 +41,12 @@ app.set('view engine', 'ejs');
 
 
 
-console.log(Admin.permission);
-
 
 // routes ======================================================================
 require('./app/routes.js')(app, passport); // load our routes and pass in our app and fully configured passport
 
 // launch ======================================================================
-models.sequelize.sync().then(function() {
+setupConfig.setup(app, function() {
 	app.listen(app.get('port'), function() {
 		console.log('Node app is running on port', app.get('port'));
 	});

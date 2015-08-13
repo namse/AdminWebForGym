@@ -25,6 +25,7 @@ models.forEach(function(model) {
 
 module.exports.sequelize = sequelize;
 
+
 /*
 // describe relationships
 (function(m) {

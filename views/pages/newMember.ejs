@@ -12,7 +12,7 @@
 		<% include ../partials/nav %>
 
 		<div id="page-wrapper">
-			<h1><span class="fa fa-plus-square"></span> Add New Club</h1>
+			<h1><span class="fa fa-plus-square"></span> Add New Member</h1>
 
 			<!-- show any messages that come back with authentication -->
 			<% if(message.length > 0) { %>
@@ -20,18 +20,18 @@
 			<% }; %>
 
 			<!-- LOGIN FORM -->
-			<form action="/newClub" method="post">
+			<form action="/member" method="post">
 				<div class="form-group">
-					<label>Name</label>
-					<input type="text" class="form-control" name="name">
+					<label>Club</label>
+					<input type="text" class="form-control" name="clubName" value="<%= clubName %>" readonly> 
 				</div>
 				<div class="form-group">
-					<label>Grand Master's Email (Invitation ticket will send)</label>
-					<input type="text" class="form-control" name="grandMasterEmail">
+					<label>First Name</label>
+					<input type="text" class="form-control" name="firstName">
 				</div>
 				<div class="form-group">
-					<label>Verify Grand Master's Email</label>
-					<input type="text" class="form-control" name="grandMasterEmailVerify">
+					<label>Last Name</label>
+					<input type="text" class="form-control" name="lastName">
 				</div>
 
 				<button type="submit" class="btn btn-warning btn-lg">Add</button>

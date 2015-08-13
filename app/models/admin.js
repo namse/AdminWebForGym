@@ -4,11 +4,11 @@ var bcrypt = require('bcrypt-nodejs');
 
 module.exports = function(sequelize, DataTypes) {
 	return sequelize.define("Admin", {
-		first_name: {
+		firstName: {
 			type: DataTypes.STRING,
 			allowNull: false
 		},
-		last_name: {
+		lastName: {
 			type: DataTypes.STRING,
 			allowNull: false
 		},

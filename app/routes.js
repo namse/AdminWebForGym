@@ -20,7 +20,7 @@ module.exports = function(app, passport) {
 	app.get('/login', function(req, res) {
 		// render the page and pass in any flash data if it exists
 		res.render('pages/login.ejs', {
-			message: req.flash('loginMessage'),
+			message: req.flash('loginMessage')
 		});
 	});
 
@@ -42,45 +42,142 @@ module.exports = function(app, passport) {
 	});
 
 	app.get('/members', isLoggedIn, function(req, res) {
-		//    param
-		//      club
-		//      index : 1 ~ n
+
+		var index = parseInt(req.param('index'));
+		if (!index || index < 1) {
+			index = 1;
+		}
 		var limit = 20;
-		var condition = {
-			offset: (ineex - 1) * limit,
-			limit: limit
-		};
-		if (req.param('club') == 'all') {
-			if (req.user.permission != Admin.getPermissionName("manager")) {
-				res.send(405);
-				return;
+
+		if (req.user.permission == Admin.getPermissionName("manager")) {
+			var clubName = req.param('club');
+			if (clubName || clubName != 'all') {
+				Club.findOne({
+					where: {
+						name: clubName
+					}
+				}).then(function(club) {
+					if (club) {
+						Member.findAll({
+							where: {
+								ClubId: club.id
+							},
+							offset: (index - 1) * limit,
+							limit: limit,
+							include: [{
+								model: Club
+							}]
+						}).then(function(members) {
+							console.log(members);
+							res.render('pages/members.ejs', {
+								clubName: clubName,
+								members: members,
+								permission: req.user.permission,
+								isAll: false
+							});
+						});
+					} else {
+						res.redirect('/');
+					}
+				});
+			} else {
+				Member.findAll({
+					offset: (index - 1) * limit,
+					limit: limit,
+					include: [{
+						model: Club
+					}]
+				}).then(function(members) {
+					console.log(members);
+					res.render('pages/members.ejs', {
+						clubName: club.name,
+						members: members,
+						permission: req.user.permission,
+						isAll: true
+					});
+				});
 			}
 		} else {
-			var club = Club.findOne({
-				where: {
-					name: req.param('club')
+			req.user.getClub().then(function(club) {
+				if (club) {
+					Member.findAll({
+						where: {
+							ClubId: club.id
+						},
+						offset: (index - 1) * limit,
+						limit: limit,
+						include: [{
+							model: Club
+						}]
+					}).then(function(members) {
+						console.log(members);
+						res.render('pages/members.ejs', {
+							clubName: club.name,
+							members: members,
+							permission: req.user.permission,
+							isAll: false
+						});
+					});
 				}
 			});
+		}
+	});
+
+	app.get('/newMember', isLoggedIn, function(req, res) {
+		var clubName = req.query.clubName;
+		if (!clubName) {
+			res.send(400);
+			return;
+		}
+		if (req.user.permission != Admin.getPermissionName("manager") && req.user.permission != Admin.getPermissionName("grandMaster") && req.user.permission != Admin.getPermissionName("master")) {
+			res.send(405);
+			return;
+		}
+		Club.findOne({
+			where: {
+				name: clubName
+			}
+		}).then(function(club) {
 			if (!club) {
-				res.send(404);
+				res.send(400);
 				return;
 			} else {
-				console.log("id : " + req.user.ClubId + " / " + club.id);
-				if (req.user.permission != Admin.getPermissionName("manager") && req.user.ClubId != club.id) {
-					res.send(404);
-					return;
-				}
+				res.render('pages/newMember.ejs', {
+					clubName: clubName,
+					permission: req.user.permission,
+					message: req.flash('newMemberMessage')
+				});
 			}
-
-			condition['ClubId'] = club.id;
-		}
-		Member.findAll({
-			where: condition
-		}).spread(function(members) {
-			res.render('pages/member.ejs', {
-				members: members
-			});
 		});
+	});
+
+	app.post('/member', isLoggedIn, function(req, res) {
+		if (!req.body.clubName || !req.body.firstName || !req.body.firstName) {
+			req.flash('newMemberMessage', 'Wrong Entry!');
+			res.redirect('/newMember?clubName=' + req.body.clubName);
+		} else {
+			Club.findOne({
+				where: {
+					name: req.body.clubName
+				}
+			}).then(function(club) {
+				if (!club) {
+					req.flash('newMemberMessage', 'Wrong Entry!');
+					res.redirect('/newMember?clubName=' + req.body.clubName);
+				} else {
+					Member.create({
+						firstName: req.body.firstName,
+						lastName: req.body.lastName
+					}).then(function(member) {
+						club.addMember(member).then(function() {
+							member.setClub(club).then(function() {
+								res.redirect('/members');
+							});
+						});
+					});
+				}
+			});
+		}
 	});
 
 	app.post('/club', isLoggedIn, function(req, res) {
@@ -93,7 +190,13 @@ module.exports = function(app, passport) {
 			res.send(405);
 			return;
 		}
-		Club.findAll().then(function(clubs) {
+		Club.findAll({
+			include: [{
+				model: Admin,
+				as: "grandMaster"
+			}]
+		}).then(function(clubs) {
+			console.log(clubs);
 			res.render('pages/clubs.ejs', {
 				clubs: clubs,
 				permission: req.user.permission
@@ -119,7 +222,7 @@ module.exports = function(app, passport) {
 		} else if (!req.body.name || req.body.name.length <= 0 || req.body.name.length > 255) {
 			req.flash('newClubMessage', 'Wrong Name.');
 			res.redirect('/newClub');
-		} else if (validateEmail(req.body.grandMasterEmail) == false || req.body.grandMasterEmail != req.body.grandMasterEmailAgain) {
+		} else if (validateEmail(req.body.grandMasterEmail) == false || req.body.grandMasterEmail != req.body.grandMasterEmailVerify) {
 			req.flash('newClubMessage', 'Worng Grand Master Email');
 			res.redirect('/newClub');
 		} else {
@@ -140,6 +243,8 @@ module.exports = function(app, passport) {
 								token: InvitationToken.generateToken(count),
 								email: req.body.grandMasterEmail
 							}).then(function(invitationToken) {
+								invitationToken.setClub(club);
+								invitationToken.save();
 								//send mail
 								var nodemailer = require('nodemailer');
 								var urlConfig = require('../config/url');
@@ -178,9 +283,133 @@ module.exports = function(app, passport) {
 		}
 	});
 
+	app.get('/invite', function(req, res) {
+		var token = req.query.token;
+		InvitationToken.findOne({
+			where: {
+				token: token
+			},
+			include: [{
+				model: Club
+			}]
+		}).then(function(invitationToken) {
+			if (!invitationToken) {
+				res.send(404);
+				return;
+			} else if (invitationToken.expired == true) {
+				res.send(400, "already used token");
+			} else {
+				var result = invitationToken.permission.replace(/([A-Z])/g, " $1");
+				var finalResult = result.charAt(0).toUpperCase() + result.slice(1);
+				var permissionName = finalResult;
+				res.render('pages/invite', {
+					message: req.flash('inviteMessage'),
+					token: token,
+					permissionName: permissionName,
+					clubName: invitationToken.Club.name
+				});
+			}
+		});
+	});
 
-	app.get('/setup', function(req, res) {
-		setupConfig.setup(app);
+	app.post('/invite', function(req, res) {
+		if (!req.body.firstName || req.body.firstName.length < 1 || !req.body.lastName || req.body.lastName.length < 1 || !req.body.email || req.body.email != req.body.emailVerify || !req.body.password || req.body.password != req.body.passwordVerify) {
+			req.flash('inviteMessage', 'Wrong Entry.');
+			res.redirect('/invite?token=' + req.body.token);
+		}
+		var token = req.body.token;
+		InvitationToken.findOne({
+			where: {
+				token: token
+			},
+			include: [{
+				model: Club
+			}]
+		}).then(function(invitationToken) {
+			if (!invitationToken) {
+				res.send(404);
+				return;
+			} else if (invitationToken.expired == true) {
+				res.send(400, "already used token");
+			} else {
+				Admin.findOne({
+					where: {
+						email: req.body.email
+					}
+				}).then(function(admin) {
+					if (admin) {
+						req.flash('inviteMessage', 'That Email is already used. Please Insert another Email.');
+						res.redirect('/invite?token=' + req.body.token);
+					} else {
+						admin = Admin.build({
+							firstName: req.body.firstName,
+							lastName: req.body.lastName,
+							email: req.body.email,
+							password: Admin.generateHash(req.body.password),
+							permission: invitationToken.permission
+						});
+						admin.save().then(function() {
+
+							invitationToken.expired = true;
+							invitationToken.Club.addAdmin(admin).then(function() {
+								invitationToken.Club.setGrandMaster(admin).then(function() {
+									invitationToken.Club.save().then(function() {
+										admin.setClub(invitationToken.Club).then(function() {
+											admin.save().then(function() {
+												req.flash('loginMessage', 'Successfully Registered.');
+												res.redirect('/login');
+											});
+										});
+									});
+								});
+							});
+						});
+					}
+				});
+				/*
+				Admin.findOrCreate({
+					where: {
+						email: req.body.email
+					},
+					defaults: {
+						firstName: req.body.firstName,
+						lastName: req.body.lastName,
+						email: req.body.email,
+						password: Admin.generateHash(req.body.password),
+						permission: invitationToken.permission
+					}
+				}).then(function(admin, created) {
+					if (created == false) {
+						req.flash('inviteMessage', 'That Email is already used. Please Insert another Email.');
+						res.redirect('/invite?token=' + req.body.token);
+					} else {
+						console.log(admin);
+						//invitationToken.expired = true;
+						console.log("before add admin");
+						invitationToken.Club.addAdmin(admin).then(function() {
+							console.log("before set gm");
+							invitationToken.Club.setGrandMaster(admin).then(function() {
+								console.log("before club save");
+								invitationToken.Club.save().then(function() {
+									console.log("before admin add club");
+									admin.addClub(invitationToken.Club).then(function() {
+										console.log("before admin save");
+										admin.save().then(function() {
+											req.flash('loginMessage', 'Successfully Registered.');
+											res.redirect('/login');
+										});
+									});
+								});
+							});
+						});
+					}
+				});*/
+			}
+		});
+	});
+
+	app.get('/reset', function(req, res) {
+		setupConfig.reset(app);
 		res.send(200);
 	});
 

@@ -32,23 +32,26 @@
 									<% if(clubs) clubs.forEach(function(club) { %>
 									<tr>
 										<td><%= club.name %></td>
-										<td><%= club.GrandMaster %></td>
-									</tr>
-									<% }); %>
-								</tbody>
-							</table>
+										<td><% if(club.grandMaster) { %>
+											<%= club.grandMaster.lastName %>
+											<% } %>
+										</td>
+										</tr>
+										<% }); %>
+									</tbody>
+								</table>
+							</div>
 						</div>
 					</div>
 				</div>
-			</div>
 
+
+			</div>
+			<!-- /#page-wrapper -->
 
 		</div>
-		<!-- /#page-wrapper -->
+		<!-- /#wrapper -->
 
-	</div>
-	<!-- /#wrapper -->
-
-	<% include ../partials/footer %>
-</body>
-</html>
+		<% include ../partials/footer %>
+	</body>
+	</html>
