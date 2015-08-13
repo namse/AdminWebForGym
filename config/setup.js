@@ -2,12 +2,32 @@ module.exports.setup = function(app) {
 	//	var app = require('../app');
 	var models = app.get('models');
 	var Admin = models.Admin;
+	var Member = models.Member;
+	var Club = models.Club;
+	var InvitationToken = models.InvitationToken;
 	var dbConfig = require('./db.js');
 	var user = dbConfig.user;
 
 	console.log(Admin.permission);
 	models.sequelize.query("drop owned by " + user + " cascade").spread(function(result, metadata) {
+
+		// belong
+		Club.hasMany(Admin);
+		Club.belongsTo(Admin, {
+			as: "grandMaster",
+			constraints: false
+		});
+		Club.hasMany(Member);
+		console.log(models);
+
+		InvitationToken.belongsTo(Club);
+
+
 		models.sequelize.sync().then(function() {
+
+
+			// test data
+
 			Admin.findOrCreate({
 				where: {
 					email: "skatpgusskat@naver.com",

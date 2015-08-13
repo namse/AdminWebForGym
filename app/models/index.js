@@ -6,16 +6,18 @@ var dbConfig = require('../../config/db.js');
 // DB Setting
 
 var sequelize = new Sequelize(dbConfig.database, dbConfig.user, dbConfig.password, {
-  host: dbConfig.host,
-  port: dbConfig.port,
-  dialect: dbConfig.dialect
+	host: dbConfig.host,
+	port: dbConfig.port,
+	dialect: dbConfig.dialect
 });
 sequelize.authenticate();
 
 // load models
 var models = [
-'Member',
-'Admin'
+	'Member',
+	'Admin',
+	'Club',
+	'InvitationToken'
 ];
 models.forEach(function(model) {
 	module.exports[model] = sequelize.import(__dirname + '/' + model.toLowerCase());
