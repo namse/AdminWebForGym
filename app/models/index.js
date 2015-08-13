@@ -20,7 +20,7 @@ var models = [
 	'InvitationToken'
 ];
 models.forEach(function(model) {
-	module.exports[model] = sequelize.import(__dirname + '/' + model.toLowerCase());
+	module.exports[model] = sequelize.import(__dirname + '/' + model.charAt(0).toLowerCase() + model.slice(1));
 });
 
 module.exports.sequelize = sequelize;
