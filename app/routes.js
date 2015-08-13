@@ -51,7 +51,7 @@ module.exports = function(app, passport) {
 
 		if (req.user.permission == Admin.getPermissionName("manager")) {
 			var clubName = req.param('club');
-			if (clubName || clubName != 'all') {
+			if (clubName && clubName != 'all') {
 				Club.findOne({
 					where: {
 						name: clubName
