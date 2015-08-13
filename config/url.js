@@ -1,1 +1,1 @@
-module.exports.web = "127.0.0.1:5000";
+module.exports.web = "warm-tundra-6146.herokuapp.com:5000";
