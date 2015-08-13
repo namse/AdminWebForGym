@@ -97,8 +97,10 @@ module.exports.reset = function(app) {
 	var dbConfig = require('./db.js');
 	var user = dbConfig.user;
 	models.sequelize.query("drop owned by " + user + " cascade").spread(function(result, metadata) {
-		modles.sequelize.query("drop schema public cascade; create schema public;").spread(function(result, metadata) {
-			module.exports.setup(app);
+		modles.sequelize.query("drop schema public cascade").spread(function(result, metadata) {
+			modles.sequelize.query("create schema public;").spread(function(result, metadata) {
+				module.exports.setup(app);
+			});
 		});
 	});
 }
