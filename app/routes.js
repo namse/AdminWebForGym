@@ -90,7 +90,6 @@ module.exports = function(app, passport) {
 				}).then(function(members) {
 					console.log(members);
 					res.render('pages/members.ejs', {
-						clubName: club.name,
 						members: members,
 						permission: req.user.permission,
 						isAll: true
