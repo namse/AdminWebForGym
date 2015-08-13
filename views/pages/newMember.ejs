@@ -1,0 +1,49 @@
+<!-- views/index.ejs -->
+<!doctype html>
+<html>
+<head>
+
+	<% include ../partials/header %>
+	
+</head>
+<body>
+	<div id="wrapper">
+
+		<% include ../partials/nav %>
+
+		<div id="page-wrapper">
+			<h1><span class="fa fa-plus-square"></span> Add New Member</h1>
+
+			<!-- show any messages that come back with authentication -->
+			<% if(message.length > 0) { %>
+			<div class="alert alert-danger"><%= message %></div>
+			<% }; %>
+
+			<!-- LOGIN FORM -->
+			<form action="/member" method="post">
+				<div class="form-group">
+					<label>Club</label>
+					<input type="text" class="form-control" name="clubName" value="<%= clubName %>" readonly> 
+				</div>
+				<div class="form-group">
+					<label>First Name</label>
+					<input type="text" class="form-control" name="firstName">
+				</div>
+				<div class="form-group">
+					<label>Last Name</label>
+					<input type="text" class="form-control" name="lastName">
+				</div>
+
+				<button type="submit" class="btn btn-warning btn-lg">Add</button>
+			</form>
+
+
+		</div>
+		<!-- /#page-wrapper -->
+
+	</div>
+	<!-- /#wrapper -->
+
+	<% include ../partials/footer %>
+</body>
+</html>
